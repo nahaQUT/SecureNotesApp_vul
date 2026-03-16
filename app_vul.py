@@ -43,7 +43,7 @@ from functools import wraps
 from flask import (Flask, render_template, request, redirect,
                    url_for, session, flash, g)
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, TextAreaField, SubmitField
+from wtforms import StringField, PasswordField, TextAreaField, SubmitField, FileField
 from markupsafe import Markup   # Used to BYPASS Jinja2 auto-escaping for XSS demo
 
 # =============================================================================
@@ -135,7 +135,6 @@ class SearchForm(FlaskForm):
 
 class UploadForm(FlaskForm):
     # ❌ No FileAllowed validator — any file type accepted
-    from wtforms import FileField
     photo  = FileField('Profile Photo')
     submit = SubmitField('Upload')
 
