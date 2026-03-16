@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Help Pages{% endblock %}
+
+{% block content %}
+<h2>Help &amp; Information</h2>
+
+<p>
+    <a href="{{ url_for('view_page', file='help.txt') }}">Help</a> &nbsp;|&nbsp;
+    <a href="{{ url_for('view_page', file='about.txt') }}">About</a>
+</p>
+
+<hr>
+
+<h3>{{ filename }}</h3>
+{# Content is rendered as plain text inside <pre> — but the filename
+   parameter is never validated, so ../app_vul.py reads the source code. #}
+<pre style="background:#f8f9fa; padding:1rem; border-radius:4px;
+            white-space:pre-wrap; word-break:break-all;">{{ content }}</pre>
+
+<hr>
+<p><small>
+    ⚠ <strong>Demo note:</strong> The <code>?file=</code> parameter is joined to
+    <code>pages/</code> without validation. Try:
+    <code>?file=../app_vul.py</code> or <code>?file=../../etc/passwd</code>
+</small></p>
+{% endblock %}

@@ -1,0 +1,24 @@
+About SecureNotes
+=================
+
+SecureNotes is a teaching example application for the
+Secure Software Development module.
+
+Version:    1.0.0
+Framework:  Flask 3.0
+Database:   SQLite 3
+
+Purpose
+-------
+This application demonstrates common web application security
+vulnerabilities and the corresponding defences.  It is used
+alongside DVWA in the lab sessions.
+
+Disclaimer
+----------
+This application is for educational use ONLY.
+Do not deploy on a public-facing server.
+
+Authors
+-------
+Secure Software Development Teaching Team

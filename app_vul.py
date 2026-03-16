@@ -37,6 +37,7 @@ Author: Secure Software Development — Teaching Example
 import os
 import hashlib
 import sqlite3
+import subprocess
 from functools import wraps
 
 from flask import (Flask, render_template, request, redirect,
@@ -462,6 +463,137 @@ def upload():
             flash(f'File uploaded: {filename}', 'success')
 
     return render_template('upload.html', form=form, uploaded_url=uploaded_url)
+
+
+# --- Diagnostics (Command Injection) -----------------------------------------
+@app.route('/diagnostics', methods=['GET', 'POST'])
+@login_required
+def diagnostics():
+    """
+    VULNERABILITY HERE
+    ------------------
+    ❌ Command Injection — user-supplied IP address concatenated directly into
+       a shell command string and executed with shell=True.
+
+    ATTACK TO TRY:
+        IP field:  127.0.0.1; id
+        IP field:  127.0.0.1; cat /etc/passwd
+        IP field:  127.0.0.1; ls -la
+
+    The shell interprets the semicolon as a command separator, so the OS
+    runs 'ping -c 2 127.0.0.1' then the injected command.
+
+    app.py fix:  subprocess.run(['ping', '-c', '2', ip], shell=False)
+                 Pass args as a list — the shell is never invoked, so
+                 metacharacters (;  &  |  $) have no special meaning.
+                 Also validate ip with: re.match(r'^\\d{1,3}(\\.\\d{1,3}){3}$', ip)
+    """
+    output = None
+    ip = ''
+    if request.method == 'POST':
+        ip = request.form.get('ip', '')
+        # ❌ VULNERABLE: input concatenated into shell string — OS metacharacters
+        #    (;  |  &  &&  ||  $()) allow arbitrary command execution.
+        cmd = f"ping -c 2 {ip}"
+        try:
+            result = subprocess.run(
+                cmd, shell=True, capture_output=True, text=True, timeout=10
+            )
+            output = result.stdout + result.stderr
+        except subprocess.TimeoutExpired:
+            output = 'Command timed out.'
+        except Exception as e:
+            output = f'Error: {e}'
+
+    return render_template('diagnostics.html', output=output, ip=ip)
+
+
+# --- View Page (File Inclusion / Path Traversal) ------------------------------
+@app.route('/page')
+def view_page():
+    """
+    VULNERABILITY HERE
+    ------------------
+    ❌ Local File Inclusion (LFI) / Path Traversal — the 'file' query parameter
+       is joined directly to the 'pages/' base directory without any validation.
+       An attacker can use ../ sequences to escape the pages/ directory and read
+       any file the web process has permission to open.
+
+    ATTACK TO TRY (in the browser address bar):
+        /page?file=help.txt                       (normal — shows help page)
+        /page?file=../app_vul.py                  (reads app source code!)
+        /page?file=../notes_vul.db                (binary — DB file)
+        /page?file=../../etc/passwd               (system file)
+        /page?file=../static/uploads/shell.php    (after file-upload attack)
+
+    app.py fix:
+        ALLOWED = {'help.txt', 'about.txt', 'faq.txt'}
+        if filename not in ALLOWED:
+            abort(404)
+        Or use: os.path.realpath() to resolve the full path then check it starts
+        with the expected base directory before opening.
+    """
+    filename = request.args.get('file', 'help.txt')
+    # ❌ VULNERABLE: no allowlist, no realpath check — any file on the system readable
+    filepath = os.path.join('pages', filename)
+    try:
+        with open(filepath, 'r', errors='replace') as f:
+            content = f.read()
+    except Exception as e:
+        content = f'Error reading file: {e}'
+
+    return render_template('view_page.html', content=content, filename=filename)
+
+
+# --- Change Password (CSRF demo) ----------------------------------------------
+@app.route('/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    """
+    VULNERABILITY HERE
+    ------------------
+    ❌ CSRF — WTF_CSRF_ENABLED is False, so no CSRF token is validated.
+       A forged POST request from any website will be accepted as legitimate,
+       because the browser automatically sends the session cookie with it.
+
+    ATTACK TO TRY:
+        1. Log in as a victim (e.g., admin / password).
+        2. While still logged in, open an attacker-controlled HTML file:
+
+           <form id="f" action="http://127.0.0.1:5001/change-password" method="POST">
+               <input type="hidden" name="new_password" value="hacked">
+               <input type="hidden" name="confirm_password" value="hacked">
+           </form>
+           <script>document.getElementById('f').submit();</script>
+
+        3. The victim's password is silently changed to 'hacked'.
+
+    app.py fix:  csrf = CSRFProtect(app)  +  {{ form.hidden_tag() }} in the
+                 template.  A signed CSRF token is embedded in the form and
+                 verified server-side; cross-origin POSTs lack the token and
+                 are rejected with HTTP 400.
+    """
+    if request.method == 'POST':
+        new_password     = request.form.get('new_password', '')
+        confirm_password = request.form.get('confirm_password', '')
+
+        # ❌ VULNERABLE: no CSRF token checked, no old-password verification
+        if new_password != confirm_password:
+            flash('Passwords do not match.', 'danger')
+        elif not new_password:
+            flash('Password cannot be empty.', 'danger')
+        else:
+            pw_hash = weak_hash(new_password)
+            db = get_db()
+            db.execute(
+                "UPDATE users SET password_hash = ? WHERE id = ?",
+                (pw_hash, session['user_id'])
+            )
+            db.commit()
+            flash('Password changed successfully!', 'success')
+            return redirect(url_for('dashboard'))
+
+    return render_template('change_password.html')
 
 
 # =============================================================================

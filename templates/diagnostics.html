@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Diagnostics{% endblock %}
+
+{% block content %}
+<h2>Server Diagnostics</h2>
+<p class="text-muted">Enter an IP address to ping the server from the host.</p>
+
+<!-- ❌ VULNERABLE FORM: no CSRF token, ip echoed back as raw text -->
+<form method="POST" action="{{ url_for('diagnostics') }}">
+    <div class="form-group">
+        <label for="ip">IP Address</label>
+        <input type="text" id="ip" name="ip"
+               value="{{ ip }}"
+               placeholder="e.g. 127.0.0.1"
+               class="form-control" style="width:300px; display:inline-block;">
+        <button type="submit" class="btn btn-primary">Run Ping</button>
+    </div>
+</form>
+
+{% if output is not none %}
+<h3>Output</h3>
+{# ❌ VULNERABLE: output rendered as Markup — command output displayed raw #}
+<pre style="background:#1e1e1e; color:#d4d4d4; padding:1rem; border-radius:4px;
+            white-space:pre-wrap; word-break:break-all;">{{ output }}</pre>
+{% endif %}
+
+<hr>
+<p><small>
+    ⚠ <strong>Demo note:</strong> This form passes the IP field directly to a
+    shell command (<code>ping -c 2 &lt;ip&gt;</code>).  Try:
+    <code>127.0.0.1; id</code> or <code>127.0.0.1; cat /etc/passwd</code>
+</small></p>
+{% endblock %}

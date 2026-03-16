@@ -1,0 +1,28 @@
+SecureNotes Help
+================
+
+Creating a Note
+---------------
+1. Log in to your account.
+2. Click "New Note" in the navigation bar.
+3. Enter a title and content for your note.
+4. Click "Save Note".
+
+Searching Notes
+---------------
+Use the Search page to find notes by keyword.
+Results are filtered to your own notes only.
+
+Uploading a Photo
+-----------------
+Navigate to the Upload page to attach a profile photo.
+Supported formats: JPG, PNG, GIF.
+
+Logging Out
+-----------
+Click "Logout" in the navigation bar to end your session.
+Your session will also expire after 30 minutes of inactivity.
+
+Contact Support
+---------------
+Email: ranesh.naha@qut.edu.au
