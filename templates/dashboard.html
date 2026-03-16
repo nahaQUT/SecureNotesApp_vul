@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>📋 My Notes</h1>
+    <a href="{{ url_for('new_note') }}" class="btn btn-primary">+ New Note</a>
+</div>
+
+{#
+    XSS PREVENTION NOTE:
+    Note titles and content are rendered with Jinja2's default auto-escaping.
+    e.g.  {{ note.title }}  →  Jinja2 HTML-entity-encodes this output.
+
+    If a user stored:  <script>alert('XSS')</script>
+    It is rendered as: &lt;script&gt;alert('XSS')&lt;/script&gt;
+    Which displays as visible text in the browser — not executable code.
+
+    ADDITIONALLY: bleach.clean() in app.py stripped dangerous tags before
+    the content was saved to the database, providing defence in depth.
+
+    NEVER use the |safe filter with user-generated content.
+#}
+
+{% if notes %}
+    <div class="notes-grid">
+        {% for note in notes %}
+        <div class="note-card">
+            <div class="note-header">
+                <!-- ✅ SECURE: auto-escaped by Jinja2 -->
+                <h3>{{ note.title }}</h3>
+                <span class="note-date">{{ note.created_at[:10] }}</span>
+            </div>
+            <div class="note-body">
+                <!-- ✅ SECURE: auto-escaped by Jinja2 — XSS payloads render as text -->
+                <p>{{ note.content }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <p>You have no notes yet.</p>
+        <a href="{{ url_for('new_note') }}" class="btn btn-primary">Create your first note</a>
+    </div>
+{% endif %}
+
+<!-- Security callout for teaching -->
+<div class="security-callout" style="margin-top: 2rem;">
+    <strong>🔍 Security highlight:</strong>
+    Create a note with content <code>&lt;script&gt;alert('xss')&lt;/script&gt;</code>
+    and save it.  When it renders here, you will see the text literally
+    — Jinja2's auto-escaping and bleach prevent execution.
+</div>
+{% endblock %}

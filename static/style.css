@@ -1,0 +1,332 @@
+/* ============================================================
+   SecureNotes — Main Stylesheet
+   Simple, clean design for the teaching example
+   ============================================================ */
+
+/* --- Reset & Base ------------------------------------------ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f0f4f8;
+    color: #1a202c;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+a { color: #2b6cb0; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code {
+    background: #edf2f7;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.88em;
+    font-family: 'Courier New', monospace;
+    color: #c05621;
+}
+
+/* --- Navbar ------------------------------------------------- */
+.navbar {
+    background: #1a365d;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-brand {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.nav-links a {
+    color: #bee3f8;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover { color: #fff; text-decoration: none; }
+
+.nav-user {
+    color: #bee3f8;
+    font-size: 0.85rem;
+    padding: 0 0.5rem;
+    border-left: 1px solid #2d4a7a;
+    border-right: 1px solid #2d4a7a;
+}
+
+.btn-logout {
+    background: #c53030;
+    color: #fff !important;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+.btn-logout:hover { background: #9b2c2c; text-decoration: none; }
+
+/* --- Flash messages ---------------------------------------- */
+.flash-container {
+    padding: 0 2rem;
+    margin-top: 1rem;
+}
+
+.alert {
+    padding: 0.75rem 1.2rem;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.alert-success { background: #c6f6d5; color: #276749; border-left: 4px solid #38a169; }
+.alert-danger  { background: #fed7d7; color: #9b2c2c; border-left: 4px solid #e53e3e; }
+.alert-warning { background: #fefcbf; color: #744210; border-left: 4px solid #d69e2e; }
+.alert-info    { background: #bee3f8; color: #2b6cb0; border-left: 4px solid #3182ce; }
+
+/* --- Main Container ---------------------------------------- */
+.container {
+    max-width: 960px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    flex: 1;
+}
+
+/* --- Buttons ----------------------------------------------- */
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1.2rem;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.btn:hover { transform: translateY(-1px); text-decoration: none; }
+.btn:active { transform: translateY(0); }
+
+.btn-primary  { background: #2b6cb0; color: #fff; }
+.btn-primary:hover { background: #2c5282; }
+.btn-secondary { background: #e2e8f0; color: #2d3748; }
+.btn-secondary:hover { background: #cbd5e0; }
+.btn-block { width: 100%; text-align: center; padding: 0.65rem; }
+
+/* --- Hero Section ------------------------------------------ */
+.hero {
+    text-align: center;
+    padding: 3.5rem 1rem 2.5rem;
+    background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+    color: #fff;
+    border-radius: 12px;
+    margin-bottom: 2.5rem;
+}
+
+.hero h1 { font-size: 2.4rem; margin-bottom: 0.6rem; }
+.hero-subtitle { font-size: 1.05rem; color: #bee3f8; margin-bottom: 1.5rem; }
+.hero-actions { display: flex; gap: 1rem; justify-content: center; }
+
+/* --- Features Grid ----------------------------------------- */
+.features { margin-bottom: 2.5rem; }
+.features h2 { margin-bottom: 1.2rem; color: #2d3748; font-size: 1.4rem; }
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.2rem;
+}
+
+.feature-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.3rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    border-top: 3px solid #2b6cb0;
+}
+
+.feature-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+.feature-card h3 { font-size: 1rem; margin-bottom: 0.4rem; color: #1a365d; }
+.feature-card p { font-size: 0.88rem; color: #4a5568; margin-bottom: 0.7rem; line-height: 1.5; }
+.feature-tag {
+    background: #ebf8ff;
+    color: #2b6cb0;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+/* --- Study note -------------------------------------------- */
+.study-note {
+    background: #fefcbf;
+    border-left: 4px solid #d69e2e;
+    border-radius: 6px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+}
+.study-note h2 { font-size: 1.1rem; margin-bottom: 0.5rem; color: #744210; }
+.study-note p { font-size: 0.9rem; color: #744210; }
+
+/* --- Form pages -------------------------------------------- */
+.form-page {
+    display: flex;
+    justify-content: center;
+    padding: 1rem 0;
+}
+
+.form-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 2rem 2.2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.09);
+    width: 100%;
+    max-width: 480px;
+}
+
+.form-card-wide { max-width: 680px; }
+
+.form-card h1 { font-size: 1.5rem; margin-bottom: 0.3rem; color: #1a365d; }
+.form-subtitle { color: #718096; font-size: 0.88rem; margin-bottom: 1.5rem; }
+
+.form-group { margin-bottom: 1.1rem; }
+.form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+    color: #2d3748;
+}
+
+.form-control,
+.form-control-file {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+    background: #fff;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #2b6cb0;
+    box-shadow: 0 0 0 3px rgba(43,108,176,0.15);
+}
+
+textarea.form-control { resize: vertical; min-height: 160px; font-family: inherit; }
+
+.field-error { color: #e53e3e; font-size: 0.83rem; display: block; margin-top: 3px; }
+.field-hint  { color: #718096; font-size: 0.8rem; display: block; margin-top: 4px; }
+
+.form-footer { text-align: center; margin-top: 1.2rem; font-size: 0.88rem; color: #718096; }
+.form-actions { display: flex; gap: 0.8rem; }
+
+.search-row {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 0.5rem;
+}
+.search-row .form-control { flex: 1; }
+.search-summary { margin: 1rem 0; color: #4a5568; font-size: 0.9rem; }
+
+/* --- Security callout -------------------------------------- */
+.security-callout {
+    margin-top: 1.5rem;
+    background: #ebf8ff;
+    border-left: 4px solid #2b6cb0;
+    border-radius: 0 6px 6px 0;
+    padding: 1rem 1.2rem;
+    font-size: 0.85rem;
+    color: #2c5282;
+    line-height: 1.6;
+}
+.security-callout ul { padding-left: 1.2rem; margin-top: 0.5rem; }
+.security-callout li { margin-bottom: 0.4rem; }
+
+/* --- Page header ------------------------------------------- */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+.page-header h1 { font-size: 1.6rem; color: #1a365d; }
+
+/* --- Notes grid -------------------------------------------- */
+.notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.1rem;
+}
+
+.note-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    overflow: hidden;
+    border-left: 4px solid #2b6cb0;
+}
+
+.note-header {
+    background: #ebf8ff;
+    padding: 0.7rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.note-header h3 { font-size: 0.95rem; color: #1a365d; }
+.note-date { font-size: 0.75rem; color: #718096; }
+.note-body { padding: 0.8rem 1rem; font-size: 0.88rem; color: #4a5568; }
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #718096;
+}
+.empty-state p { margin-bottom: 1rem; }
+
+/* --- Upload result ----------------------------------------- */
+.upload-result {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+.upload-result h3 { margin-bottom: 0.8rem; color: #276749; }
+.uploaded-img {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    object-fit: cover;
+}
+
+/* --- Footer ------------------------------------------------ */
+.footer {
+    text-align: center;
+    padding: 1.2rem;
+    background: #1a365d;
+    color: #bee3f8;
+    font-size: 0.82rem;
+    margin-top: auto;
+}
+.footer a { color: #bee3f8; }

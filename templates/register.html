@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <div class="form-card">
+        <h1>Create Account</h1>
+        <p class="form-subtitle">Demonstrates server-side input validation &amp; password hashing.</p>
+
+        <!--
+            SECURITY NOTE — CSRF TOKEN:
+            form.hidden_tag() renders:
+                <input type="hidden" name="csrf_token" value="<signed token>">
+            Flask-WTF verifies this on POST.  Without it, cross-site forms could
+            submit on behalf of the user (CSRF attack).
+        -->
+        <form method="POST" action="{{ url_for('register') }}" novalidate>
+            {{ form.hidden_tag() }}
+
+            <!-- USERNAME — allowlist regex enforced in RegisterForm.validate_username() -->
+            <div class="form-group">
+                {{ form.username.label }}
+                {{ form.username(class="form-control", placeholder="letters, digits, underscores only") }}
+                {% if form.username.errors %}
+                    {% for error in form.username.errors %}
+                        <span class="field-error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+                <small class="field-hint">3–20 characters. Letters, digits, and underscores only.</small>
+            </div>
+
+            <!-- EMAIL — format validated by validate_email() -->
+            <div class="form-group">
+                {{ form.email.label }}
+                {{ form.email(class="form-control", placeholder="you@example.com") }}
+                {% if form.email.errors %}
+                    {% for error in form.email.errors %}
+                        <span class="field-error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- PASSWORD — strength validated server-side by validate_password() -->
+            <div class="form-group">
+                {{ form.password.label }}
+                {{ form.password(class="form-control", placeholder="Min 8 chars, uppercase, digit, special char") }}
+                {% if form.password.errors %}
+                    {% for error in form.password.errors %}
+                        <span class="field-error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+                <small class="field-hint">
+                    Stored as a PBKDF2-SHA256 hash — never as plain text.
+                </small>
+            </div>
+
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary btn-block") }}
+            </div>
+        </form>
+
+        <p class="form-footer">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+
+        <!-- Security callout for teaching -->
+        <div class="security-callout">
+            <strong>🔍 Security highlight:</strong>
+            Try submitting with username <code>admin'; DROP TABLE users;--</code>
+            or a password shorter than 8 characters — WTForms rejects both
+            before they ever reach the database.
+        </div>
+    </div>
+</div>
+{% endblock %}

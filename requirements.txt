@@ -1,0 +1,13 @@
+# SecureNotesApp — Python Dependencies
+# Install with:  pip install -r requirements.txt
+
+Flask==3.0.3
+Flask-WTF==1.2.1
+bleach==6.1.0
+Werkzeug==3.0.3
+
+# Included automatically as Flask dependencies (listed for clarity):
+# Jinja2         — HTML templating with auto-escaping
+# MarkupSafe     — safe HTML string handling used by Jinja2
+# WTForms        — form validation (pulled in by Flask-WTF)
+# itsdangerous   — CSRF token signing

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}New Note{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <div class="form-card form-card-wide">
+        <h1>✏️ New Note</h1>
+        <p class="form-subtitle">
+            Demonstrates CSRF protection, input length validation, and bleach HTML sanitisation.
+        </p>
+
+        <!--
+            CSRF TOKEN: form.hidden_tag() inserts the signed CSRF token.
+            Flask-WTF rejects any POST that does not include this token,
+            preventing cross-site request forgery attacks.
+        -->
+        <form method="POST" action="{{ url_for('new_note') }}" novalidate>
+            {{ form.hidden_tag() }}
+
+            <!-- TITLE — length-limited by WTForms (max 100 chars) -->
+            <div class="form-group">
+                {{ form.title.label }}
+                {{ form.title(class="form-control", placeholder="Note title (max 100 characters)") }}
+                {% if form.title.errors %}
+                    {% for error in form.title.errors %}
+                        <span class="field-error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- CONTENT — sanitised with bleach before storage -->
+            <div class="form-group">
+                {{ form.content.label }}
+                {{ form.content(class="form-control", rows="8",
+                                placeholder="Write your note here... (max 2,000 characters)") }}
+                {% if form.content.errors %}
+                    {% for error in form.content.errors %}
+                        <span class="field-error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+                <small class="field-hint">
+                    Basic formatting allowed: &lt;b&gt; &lt;i&gt; &lt;em&gt; &lt;p&gt; &lt;br&gt;.
+                    All other HTML is stripped by bleach before saving.
+                </small>
+            </div>
+
+            <div class="form-actions">
+                {{ form.submit(class="btn btn-primary") }}
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+
+        <!-- Teaching callout -->
+        <div class="security-callout">
+            <strong>🔍 Security highlight:</strong>
+            Try saving content containing <code>&lt;script&gt;alert('xss')&lt;/script&gt;</code>
+            or <code>&lt;img src=x onerror="alert(1)"&gt;</code>.
+            bleach strips both before they reach the database.
+            Check the dashboard — the content is stored and displayed as harmless text.
+        </div>
+    </div>
+</div>
+{% endblock %}

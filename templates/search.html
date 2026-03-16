@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Search Notes{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <div class="form-card form-card-wide">
+        <h1>🔍 Search Notes</h1>
+        <p class="form-subtitle">
+            Demonstrates SQL Injection prevention in a LIKE query, and reflected XSS prevention.
+        </p>
+
+        <!--
+            CSRF token on the search form.
+            While search may seem low-risk, an unprotected POST form can still
+            be abused by attackers to force searches on a user's behalf.
+        -->
+        <form method="POST" action="{{ url_for('search') }}" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="search-row">
+                {{ form.query(class="form-control",
+                              placeholder="Search your notes by title or content...") }}
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+            {% if form.query.errors %}
+                {% for error in form.query.errors %}
+                    <span class="field-error">{{ error }}</span>
+                {% endfor %}
+            {% endif %}
+        </form>
+
+        <!--
+            REFLECTED XSS PREVENTION:
+            The search term is echoed back with {{ query }} — auto-escaped by Jinja2.
+            Input: <script>alert('xss')</script>
+            Output rendered: &lt;script&gt;alert('xss')&lt;/script&gt;
+            Displayed as visible text, never executed.
+        -->
+        {% if query %}
+        <p class="search-summary">
+            Results for: <strong>{{ query }}</strong>
+            <!-- ✅ SECURE: {{ query }} is auto-escaped — reflected XSS prevented -->
+        </p>
+        {% endif %}
+
+        <!-- SEARCH RESULTS -->
+        {% if results %}
+            <div class="notes-grid">
+                {% for note in results %}
+                <div class="note-card">
+                    <div class="note-header">
+                        <!--
+                            ✅ SECURE: auto-escaped output.
+                            An attacker cannot inject HTML through a note title
+                            that appears in search results.
+                        -->
+                        <h3>{{ note.title }}</h3>
+                        <span class="note-date">{{ note.created_at[:10] }}</span>
+                    </div>
+                    <div class="note-body">
+                        <!-- ✅ SECURE: auto-escaped -->
+                        <p>{{ note.content }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Teaching callout -->
+        <div class="security-callout">
+            <strong>🔍 Security highlight — SQL Injection test:</strong>
+            Search for <code>' OR '1'='1</code> — the parameterised LIKE query
+            treats this as a literal search string, not as SQL syntax.
+            It will find notes that literally contain that text, not expose all rows.
+            <br><br>
+            <strong>XSS test:</strong>
+            Search for <code>&lt;img src=x onerror=alert(1)&gt;</code>.
+            The term is reflected on the page as plain text, never executed.
+        </div>
+    </div>
+</div>
+{% endblock %}

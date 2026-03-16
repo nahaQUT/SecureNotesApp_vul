@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Log In{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <div class="form-card">
+        <h1>Log In</h1>
+        <p class="form-subtitle">Demonstrates SQL Injection prevention &amp; safe session handling.</p>
+
+        <form method="POST" action="{{ url_for('login') }}" novalidate>
+            <!--
+                CSRF TOKEN — prevents cross-site form hijacking.
+                See register.html for explanation.
+            -->
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ form.username.label }}
+                {{ form.username(class="form-control", placeholder="Your username") }}
+                {% if form.username.errors %}
+                    {% for error in form.username.errors %}
+                        <span class="field-error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.password.label }}
+                {{ form.password(class="form-control", placeholder="Your password") }}
+                {% if form.password.errors %}
+                    {% for error in form.password.errors %}
+                        <span class="field-error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary btn-block") }}
+            </div>
+        </form>
+
+        <p class="form-footer">No account? <a href="{{ url_for('register') }}">Register here</a></p>
+
+        <!-- Teaching callout -->
+        <div class="security-callout">
+            <strong>🔍 Security highlight:</strong>
+            Try username <code>admin' --</code> with any password.
+            The parameterised query in <code>app.py</code> treats the entire
+            string as literal data — the <code>--</code> comment trick has
+            no effect, and login fails correctly.
+        </div>
+    </div>
+</div>
+{% endblock %}

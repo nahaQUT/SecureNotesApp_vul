@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>🔒 SecureNotes</h1>
+    <p class="hero-subtitle">A Flask teaching example demonstrating input sanitisation and secure coding practices.</p>
+    {% if not session.get('username') %}
+        <div class="hero-actions">
+            <a href="{{ url_for('register') }}" class="btn btn-primary">Get Started</a>
+            <a href="{{ url_for('login') }}" class="btn btn-secondary">Log In</a>
+        </div>
+    {% else %}
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Go to Dashboard</a>
+    {% endif %}
+</div>
+
+<!-- Security features overview -->
+<section class="features">
+    <h2>Security Features Demonstrated</h2>
+    <div class="feature-grid">
+
+        <div class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3>SQL Injection Prevention</h3>
+            <p>
+                All database queries use <strong>parameterised placeholders (<code>?</code>)</strong>.
+                User input is never concatenated into SQL strings — it is always passed
+                as a separate data argument.
+            </p>
+            <span class="feature-tag">Login · Search · All queries</span>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🚫</div>
+            <h3>XSS Prevention</h3>
+            <p>
+                Jinja2 <strong>auto-escapes all output</strong> by default.
+                Note content is also sanitised with <strong>bleach</strong> before storage,
+                stripping dangerous HTML tags while allowing safe formatting.
+            </p>
+            <span class="feature-tag">Dashboard · Search results</span>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🔑</div>
+            <h3>CSRF Protection</h3>
+            <p>
+                Every POST form contains a hidden <strong>CSRF token</strong> generated
+                by Flask-WTF. Requests without a valid token are rejected with HTTP 400.
+            </p>
+            <span class="feature-tag">All forms</span>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">✅</div>
+            <h3>Input Validation</h3>
+            <p>
+                WTForms validators enforce <strong>field length and format</strong>.
+                Custom validators apply <strong>allowlist regex</strong> to usernames and emails.
+                Password strength is enforced server-side.
+            </p>
+            <span class="feature-tag">Register · New Note</span>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>Password Hashing</h3>
+            <p>
+                Passwords are stored as <strong>PBKDF2-SHA256 hashes</strong> with a unique
+                random salt per user (via Werkzeug). Plain text is never stored or logged.
+            </p>
+            <span class="feature-tag">Register · Login</span>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">📁</div>
+            <h3>File Upload Validation</h3>
+            <p>
+                Uploads are checked against an <strong>extension allowlist</strong>,
+                validated via <strong>magic bytes</strong> (not just extension),
+                renamed to a UUID, and size-limited to 2 MB.
+            </p>
+            <span class="feature-tag">Upload page</span>
+        </div>
+
+    </div>
+</section>
+
+<section class="study-note">
+    <h2>📚 For Students</h2>
+    <p>
+        Open <code>app.py</code> and <code>vulnerable_examples.py</code> side by side.
+        Each route in <code>app.py</code> has security comments explaining <em>what</em>
+        is being protected and <em>why</em>.  <code>vulnerable_examples.py</code> shows
+        the insecure version of each feature with example attack payloads.
+    </p>
+</section>
+{% endblock %}

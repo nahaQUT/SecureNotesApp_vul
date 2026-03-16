@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}File Upload{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <div class="form-card">
+        <h1>📎 Upload Profile Photo</h1>
+        <p class="form-subtitle">
+            Demonstrates secure file upload: extension allowlist, magic-byte validation,
+            filename sanitisation, and file size limits.
+        </p>
+
+        <form method="POST" action="{{ url_for('upload') }}"
+              enctype="multipart/form-data" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ form.photo.label }}
+                {{ form.photo(class="form-control-file") }}
+                {% if form.photo.errors %}
+                    {% for error in form.photo.errors %}
+                        <span class="field-error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+                <small class="field-hint">
+                    Accepted: PNG, JPG, JPEG, GIF — max 2 MB.
+                    File content is validated (not just the extension).
+                </small>
+            </div>
+
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+
+        <!-- Show uploaded image if available -->
+        {% if uploaded_url %}
+        <div class="upload-result">
+            <h3>✅ Uploaded Successfully</h3>
+            <img src="{{ uploaded_url }}" alt="Uploaded image" class="uploaded-img">
+            <p>
+                <small>
+                    File stored with a random UUID filename — the original filename
+                    is discarded for security.
+                </small>
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- Teaching callout -->
+        <div class="security-callout">
+            <strong>🔍 Security highlights to test:</strong>
+            <ul>
+                <li>
+                    <strong>Extension check:</strong> Try uploading a <code>.py</code>
+                    or <code>.php</code> file — it will be rejected by the allowlist.
+                </li>
+                <li>
+                    <strong>Magic-byte check:</strong> Rename a Python script
+                    to <code>shell.jpg</code> and try uploading — <code>is_valid_image()</code>
+                    reads the file's actual content and rejects it.
+                </li>
+                <li>
+                    <strong>Filename sanitisation:</strong> <code>secure_filename()</code>
+                    strips path traversal sequences such as
+                    <code>../../etc/passwd.jpg</code>.
+                </li>
+                <li>
+                    <strong>Size limit:</strong> Any file over 2 MB returns HTTP 413.
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
