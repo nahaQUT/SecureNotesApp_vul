@@ -602,4 +602,4 @@ if __name__ == '__main__':
     init_db()
     # Runs on port 5001 so both app.py (5000) and app_vul.py (5001) can run
     # simultaneously in the same terminal or two terminal windows.
-    app.run(debug=True, host='127.0.0.1', port=5001)
+    app.run(debug=True, host='0.0.0.0', port=5001)
